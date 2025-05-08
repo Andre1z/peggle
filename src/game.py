@@ -50,7 +50,7 @@ while running:
     elif ui_event == "sound_settings":
         pass  # La visibilidad del menú ya se gestiona en UI.py
     elif ui.show_sound_settings:
-        ui.update_volume(event, sound_manager)  # Ajuste de volumen cuando la ventana está abierta
+        ui.update_volume(event, sound_manager)  # Ajuste de volumen ahora funciona correctamente
 
     board.update()
     board.draw(screen)

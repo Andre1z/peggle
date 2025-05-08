@@ -10,16 +10,21 @@ pygame.mixer.init()
 
 class SoundManager:
     def __init__(self):
-        """Carga los sonidos del juego desde config.py."""
+        """Carga los sonidos del juego y almacena los volúmenes de efectos por separado."""
         self.launch_sound = pygame.mixer.Sound(config.SOUND_LAUNCH)
         self.hit_sound = pygame.mixer.Sound(config.SOUND_HIT)
+        self.music_volume = 1.0  # Volumen inicial de la música
+        self.launch_volume = 1.0  # Volumen inicial del sonido de lanzamiento
+        self.hit_volume = 1.0  # Volumen inicial del sonido de impacto
 
     def play_launch(self):
-        """Reproduce el sonido al lanzar la bola."""
+        """Reproduce el sonido al lanzar la bola con el volumen ajustado."""
+        self.launch_sound.set_volume(self.launch_volume)  # Aplica el volumen antes de reproducir
         self.launch_sound.play()
 
     def play_hit(self):
-        """Reproduce el sonido al golpear un peg."""
+        """Reproduce el sonido al golpear un peg con el volumen ajustado."""
+        self.hit_sound.set_volume(self.hit_volume)  # Aplica el volumen antes de reproducir
         self.hit_sound.play()
 
     def play_background(self):
@@ -29,9 +34,15 @@ class SoundManager:
 
     def set_music_volume(self, volume):
         """Ajusta el volumen de la música de fondo."""
-        pygame.mixer.music.set_volume(volume)  # Volumen entre 0.0 y 1.0
+        self.music_volume = volume
+        pygame.mixer.music.set_volume(volume)
 
-    def set_effects_volume(self, volume):
-        """Ajusta el volumen de los efectos de sonido."""
+    def set_launch_volume(self, volume):
+        """Ajusta el volumen de lanzar.wav."""
+        self.launch_volume = volume
         self.launch_sound.set_volume(volume)
+
+    def set_hit_volume(self, volume):
+        """Ajusta el volumen de golpear.wav."""
+        self.hit_volume = volume
         self.hit_sound.set_volume(volume)
