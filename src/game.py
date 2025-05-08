@@ -10,6 +10,13 @@ from sound import EfectoSonidos
 
 pygame.init()
 
+# Cargar imagen de fondo
+background_image = pygame.image.load("assets/fondo.webp")
+
+# Aplicar efecto borroso (reduciendo tamaño y expandiéndolo nuevamente)
+blurred_image = pygame.transform.smoothscale(background_image, (config.SCREEN_WIDTH // 2, config.SCREEN_HEIGHT // 2))
+blurred_image = pygame.transform.scale(blurred_image, (config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
+
 screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
 pygame.display.set_caption("Peggle Nights Recreation")
 
@@ -24,7 +31,8 @@ running = True
 clock = pygame.time.Clock()
 
 while running:
-    screen.fill(config.BACKGROUND_COLOR)
+    # Dibujar fondo con efecto borroso
+    screen.blit(blurred_image, (0, 0))
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -40,10 +48,13 @@ while running:
             board = Board(config.SCREEN_WIDTH, config.SCREEN_HEIGHT)  
             score = 0  
 
-        # Detectar clic para lanzar la bola hacia la dirección seleccionada
+        # Detectar movimiento del mouse para actualizar preview de trayectoria
+        elif event.type == pygame.MOUSEMOTION and not board.ball_released:
+            board.aim_x, board.aim_y = event.pos  # Actualizar la dirección prevista
+
+        # Detectar clic para lanzar la bola
         elif event.type == pygame.MOUSEBUTTONDOWN and not board.ball_released:
-            target_x, target_y = event.pos  # Capturar posición del clic
-            board.release_ball(target_x, target_y)
+            board.release_ball(board.aim_x, board.aim_y)
 
     board.update()
     board.draw(screen)

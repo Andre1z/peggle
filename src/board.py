@@ -20,6 +20,8 @@ class Board:
         self.ball = Ball(config.BALL_INITIAL_POSITION[0], config.BALL_INITIAL_POSITION[1])
         self.sound_manager = EfectoSonidos()
         self.ball_released = False  # La bola no se mueve hasta que el jugador haga clic
+        self.aim_x = self.ball.x  # Posición inicial de la preview
+        self.aim_y = self.ball.y
 
     def release_ball(self, target_x, target_y):
         """Lanza la bola hacia la dirección seleccionada por el jugador."""
@@ -65,3 +67,7 @@ class Board:
         for peg in self.pegs:
             peg.draw(screen)
         self.ball.draw(screen)
+
+        # Dibujar línea de trayectoria antes del lanzamiento
+        if not self.ball_released:
+            pygame.draw.line(screen, (255, 255, 255), (self.ball.x, self.ball.y), (self.aim_x, self.aim_y), 2)
