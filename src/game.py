@@ -18,7 +18,7 @@ blurred_image = pygame.transform.smoothscale(background_image, (config.SCREEN_WI
 blurred_image = pygame.transform.scale(blurred_image, (config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
 
 screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
-pygame.display.set_caption("Peggle Nights Recreation")
+pygame.display.set_caption("Peggle Recreation")
 
 sound_manager = EfectoSonidos()
 ui = UI(config.SCREEN_WIDTH, config.SCREEN_HEIGHT, sound_manager)
