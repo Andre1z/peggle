@@ -1,6 +1,11 @@
 import pygame
 from board import Board
 from ui import UI
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/.."))  # Agrega la ruta a la raíz
+import config  # Ahora puedes importar config.py normalmente
+
 
 pygame.init()
 

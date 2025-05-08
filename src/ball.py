@@ -1,4 +1,9 @@
 import pygame
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/.."))  # Agrega la ruta a la raíz
+import config  # Ahora puedes importar config.py normalmente
+
 
 class Ball:
     def __init__(self, x, y, radius=10, color=(0, 0, 255), velocity=(0, 5)):
