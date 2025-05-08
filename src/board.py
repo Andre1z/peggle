@@ -21,6 +21,23 @@ class Board:
         self.sound_manager = EfectoSonidos()
         self.ball_released = False  # La bola no se mueve hasta que el jugador haga clic
 
+    def release_ball(self, target_x, target_y):
+        """Lanza la bola hacia la dirección seleccionada por el jugador."""
+        if not self.ball_released:
+            self.ball_released = True
+            self.ball.released = True
+
+            # Calcular dirección del lanzamiento
+            direction_x = target_x - self.ball.x
+            direction_y = target_y - self.ball.y
+            magnitude = (direction_x**2 + direction_y**2) ** 0.5  # Magnitud del vector
+
+            if magnitude > 0:
+                self.ball.velocity[0] = (direction_x / magnitude) * config.BALL_SPEED
+                self.ball.velocity[1] = (direction_y / magnitude) * config.BALL_SPEED
+
+            self.sound_manager.play_launch()
+
     def update(self):
         """Actualiza la lógica del juego, aplicando gravedad si la bola ha sido lanzada."""
         if self.ball_released:

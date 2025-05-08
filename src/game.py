@@ -40,11 +40,10 @@ while running:
             board = Board(config.SCREEN_WIDTH, config.SCREEN_HEIGHT)  
             score = 0  
 
-        # Detectar clic para lanzar la bola
+        # Detectar clic para lanzar la bola hacia la dirección seleccionada
         elif event.type == pygame.MOUSEBUTTONDOWN and not board.ball_released:
-            board.ball_released = True
-            board.ball.released = True
-            sound_manager.play_launch()
+            target_x, target_y = event.pos  # Capturar posición del clic
+            board.release_ball(target_x, target_y)
 
     board.update()
     board.draw(screen)
