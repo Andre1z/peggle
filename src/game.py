@@ -7,19 +7,20 @@ import config
 
 from board import Board
 from ui import UI
-from sound import EfectoSonidos  # Importar la nueva clase de efectos de sonido
+from sound import EfectoSonidos  # Importamos la nueva clase con ajustes de volumen persistentes
 
 pygame.init()
 
 screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
 pygame.display.set_caption("Peggle Nights Recreation")
 
+sound_manager = EfectoSonidos()  # Inicializar sistema de sonido y cargar volúmenes desde JSON
+ui = UI(config.SCREEN_WIDTH, config.SCREEN_HEIGHT, sound_manager)  # Pasar sound_manager a UI
 board = Board(config.SCREEN_WIDTH, config.SCREEN_HEIGHT)
-ui = UI(config.SCREEN_WIDTH, config.SCREEN_HEIGHT)
-sound_manager = EfectoSonidos()  # Usar la nueva clase para efectos de sonido
-sound_manager.play_background()
-score = 0  
 
+sound_manager.play_background()  # Reproducir música de fondo
+
+score = 0
 running = True
 clock = pygame.time.Clock()
 ball_released = False  

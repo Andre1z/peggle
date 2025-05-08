@@ -1,21 +1,55 @@
 import pygame
 import os
+import json
 
 class UI:
-    def __init__(self, width, height):
+    def __init__(self, width, height, sound_manager):
         self.width = width
         self.height = height
         self.font = pygame.font.Font(None, 36)
         self.reset_button = pygame.Rect(width - 150, height - 50, 140, 40)  # Botón de reinicio
         self.sound_button = pygame.Rect(20, height - 70, 50, 50)  # Botón de configuración de sonido
-        self.close_button = pygame.Rect(260, self.height - 280, 30, 30)  # Botón de cerrar la configuración
+        self.close_button = pygame.Rect(260, self.height - 280, 30, 30)  # Botón de cerrar configuración
         self.show_sound_settings = False  # Indica si la ventana de configuración está abierta
+
+        # Cargar los volúmenes guardados desde JSON
+        self.config_file = os.path.join(os.path.dirname(__file__), "audio_config.json")
         self.music_volume = 1.0
-        self.effects_volume = 1.0  # Ahora controla ambos sonidos de efectos
+        self.effects_volume = 1.0
+        self.load_audio_config(sound_manager)  # Cargar ajustes guardados
 
         # Cargar imagen de tuerca ⚙️
         self.gear_icon = pygame.image.load("assets/icons/gear.png")
         self.gear_icon = pygame.transform.scale(self.gear_icon, (40, 40))  # Ajustar tamaño
+
+    def load_audio_config(self, sound_manager):
+        """Carga los ajustes de audio desde JSON y actualiza las barras de sonido."""
+        if os.path.exists(self.config_file):
+            try:
+                with open(self.config_file, "r") as file:
+                    data = json.load(file)
+                    self.music_volume = data.get("music_volume", 1.0)
+                    self.effects_volume = data.get("effects_volume", 1.0)
+                    sound_manager.set_music_volume(self.music_volume)
+                    sound_manager.set_effects_volume(self.effects_volume)
+            except json.JSONDecodeError:
+                print("⚠ Error: El archivo audio_config.json está vacío o corrupto. Se usarán valores por defecto.")
+                self.save_audio_config(sound_manager)
+        else:
+            self.save_audio_config(sound_manager)
+
+    def save_audio_config(self, sound_manager):
+        """Guarda los ajustes de volumen actuales en JSON."""
+        data = {
+            "music_volume": self.music_volume,
+            "effects_volume": self.effects_volume
+        }
+        with open(self.config_file, "w") as file:
+            json.dump(data, file, indent=4)
+        
+        # Aplicar los cambios al sound_manager
+        sound_manager.set_music_volume(self.music_volume)
+        sound_manager.set_effects_volume(self.effects_volume)
 
     def draw(self, screen, score):
         """Dibuja la interfaz en la pantalla."""
@@ -62,21 +96,20 @@ class UI:
         screen.blit(close_text, (270, self.height - 275))
 
         music_label = self.font.render("Música", True, (255, 255, 255))
-        effects_label = self.font.render("Efectos de Sonido", True, (255, 255, 255))  # Nueva etiqueta
+        effects_label = self.font.render("Efectos de Sonido", True, (255, 255, 255))
 
         screen.blit(music_label, (40, self.height - 230))
-        screen.blit(effects_label, (40, self.height - 180))  # Solo una barra de efectos
+        screen.blit(effects_label, (40, self.height - 180))
 
-        # Barras de volumen con indicadores
+        # Barras de volumen con indicadores reflejando los valores guardados
         pygame.draw.rect(screen, (100, 100, 100), (40, self.height - 210, 200, 10))  # Música
         pygame.draw.rect(screen, (100, 100, 100), (40, self.height - 160, 200, 10))  # Efectos
 
-        # Indicadores del volumen actual
         pygame.draw.rect(screen, (255, 255, 255), (40, self.height - 210, int(self.music_volume * 200), 10))
-        pygame.draw.rect(screen, (255, 255, 255), (40, self.height - 160, int(self.effects_volume * 200), 10))  # Efectos
+        pygame.draw.rect(screen, (255, 255, 255), (40, self.height - 160, int(self.effects_volume * 200), 10))
 
     def update_volume(self, event, sound_manager):
-        """Permite ajustar el volumen de la música y los efectos de sonido de manera independiente."""
+        """Ajusta el volumen de la música y los efectos de sonido y guarda los cambios."""
         if self.show_sound_settings and event.type == pygame.MOUSEBUTTONDOWN:
             x, y = event.pos
             if 40 <= x <= 240:
@@ -85,4 +118,5 @@ class UI:
                     sound_manager.set_music_volume(self.music_volume)
                 elif self.height - 160 <= y <= self.height - 150:  # Control de efectos
                     self.effects_volume = (x - 40) / 200
-                    sound_manager.set_effects_volume(self.effects_volume)  # Nuevo método
+                    sound_manager.set_effects_volume(self.effects_volume)
+                self.save_audio_config(sound_manager)  # Guardar cambios en JSON
