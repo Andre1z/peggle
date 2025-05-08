@@ -1,29 +1,34 @@
 import pygame
-from board import Board
-from ui import UI
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/.."))  # Agrega la ruta a la raíz
-import config  # Ahora puedes importar config.py normalmente
 
+# Ajustar la ruta para importar config.py desde la raíz
+sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/.."))
+import config
+
+from board import Board
+from ui import UI
+from sound import SoundManager
 
 pygame.init()
 
-WIDTH, HEIGHT = 800, 600
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+# Configuración de pantalla
+screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
 pygame.display.set_caption("Peggle Nights Recreation")
 
-board = Board(WIDTH, HEIGHT)
-ui = UI(WIDTH, HEIGHT)  
+# Inicializar elementos del juego
+board = Board(config.SCREEN_WIDTH, config.SCREEN_HEIGHT)
+ui = UI(config.SCREEN_WIDTH, config.SCREEN_HEIGHT)
+sound_manager = SoundManager()
 score = 0  
 
 running = True
 clock = pygame.time.Clock()
 ball_released = False  
-aim_x, aim_y = WIDTH // 2, HEIGHT // 2  
+aim_x, aim_y = config.SCREEN_WIDTH // 2, config.SCREEN_HEIGHT // 2  
 
 while running:
-    screen.fill((0, 0, 0))  
+    screen.fill(config.BACKGROUND_COLOR)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -31,16 +36,17 @@ while running:
         elif event.type == pygame.MOUSEMOTION and not ball_released:
             aim_x, aim_y = event.pos  
         elif event.type == pygame.MOUSEBUTTONDOWN and not ball_released:
-            board.ball.velocity = [(aim_x - WIDTH // 2) * 0.05, 5]  
+            board.ball.velocity = [(aim_x - config.SCREEN_WIDTH // 2) * 0.05, config.BALL_SPEED]
             ball_released = True
+            sound_manager.play_launch()  # Sonido al disparar la bola
         elif ui.handle_event(event):  
-            board = Board(WIDTH, HEIGHT)  
+            board = Board(config.SCREEN_WIDTH, config.SCREEN_HEIGHT)  
             ball_released = False
             score = 0  
 
     # Dibujar la trayectoria de la bola antes de disparar
     if not ball_released:
-        pygame.draw.line(screen, (255, 255, 255), (WIDTH // 2, 100), (aim_x, aim_y), 2)
+        pygame.draw.line(screen, (255, 255, 255), (config.SCREEN_WIDTH // 2, 100), (aim_x, aim_y), 2)
 
     board.update()
     board.draw(screen)

@@ -1,49 +1,42 @@
 import pygame
+import sys
+import os
+
+# Ajustar la ruta para importar config.py desde la raíz
+sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/.."))
+import config
+
 from peg import Peg
 from ball import Ball
 import physics
-from particles import Particle
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/.."))  # Agrega la ruta a la raíz
-import config  # Ahora puedes importar config.py normalmente
-
+from sound import SoundManager
 
 class Board:
     def __init__(self, width, height):
         self.width = width
         self.height = height
         self.pegs = []
-        self.ball = Ball(width // 2, 100, velocity=(0, 0))
-        self.particles = []  # Lista para almacenar partículas
+        self.ball = Ball(config.BALL_INITIAL_POSITION[0], config.BALL_INITIAL_POSITION[1])
+        self.sound_manager = SoundManager()  # Instancia de sonidos
         self.create_pegs()
 
     def create_pegs(self):
-        positions = [(200, 300), (400, 300), (600, 300)]
-        for pos in positions:
+        """Crea pegs en posiciones predefinidas."""
+        for pos in config.PEG_POSITIONS:
             self.pegs.append(Peg(pos[0], pos[1]))
 
     def update(self):
+        """Actualiza la lógica del tablero."""
         self.ball.update()
         
         for peg in self.pegs:
             if physics.check_collision(self.ball, peg):
                 physics.resolve_collision(self.ball, peg)
-                self.create_particles(peg.x, peg.y)  # Generar partículas
-
-        for particle in self.particles:
-            particle.update()
-
-        self.particles = [p for p in self.particles if p.lifespan > 0]  # Filtrar partículas activas
+                peg.hit()  # Cambiar color del peg al ser impactado
+                self.sound_manager.play_hit()  # Reproduce sonido de impacto
 
     def draw(self, screen):
+        """Dibuja los elementos del tablero en la pantalla."""
         for peg in self.pegs:
             peg.draw(screen)
         self.ball.draw(screen)
-        for particle in self.particles:
-            particle.draw(screen)
-
-    def create_particles(self, x, y):
-        """Genera partículas en la posición de impacto."""
-        for _ in range(10):
-            self.particles.append(Particle(x, y, (255, 255, 0)))
