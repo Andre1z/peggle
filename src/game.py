@@ -1,28 +1,27 @@
 import pygame
-from src.board import Board
+from board import Board
 
-# Inicializar Pygame
 pygame.init()
 
-# Configuración de pantalla
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Peggle Nights Recreation")
 
-# Cargar el tablero
 board = Board(WIDTH, HEIGHT)
 
-# Bucle principal
 running = True
 clock = pygame.time.Clock()
+ball_released = False  # La bola comienza quieta
 
 while running:
-    screen.fill((0, 0, 0))  # Fondo negro
+    screen.fill((0, 0, 0))  
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN and not ball_released:
+            board.ball.velocity = [0, 5]  # Establecemos velocidad en Y
+            ball_released = True
 
-    # Actualizar el tablero
     board.update()
     board.draw(screen)
 

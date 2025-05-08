@@ -1,7 +1,7 @@
 import pygame
-import peg
-import ball
-import physics
+from peg import Peg
+from ball import Ball
+import physics as physics
 
 class Board:
     def __init__(self, width, height):
