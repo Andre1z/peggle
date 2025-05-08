@@ -4,23 +4,22 @@ import os
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/.."))
 import config
-
 from board import Board
 from ui import UI
-from sound import EfectoSonidos  # Importamos la nueva clase con ajustes de volumen persistentes
+from sound import EfectoSonidos
 
 pygame.init()
 
 screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
 pygame.display.set_caption("Peggle Nights Recreation")
 
-sound_manager = EfectoSonidos()  # Inicializar sistema de sonido y cargar volúmenes desde JSON
-ui = UI(config.SCREEN_WIDTH, config.SCREEN_HEIGHT, sound_manager)  # Pasar sound_manager a UI
+sound_manager = EfectoSonidos()
+ui = UI(config.SCREEN_WIDTH, config.SCREEN_HEIGHT, sound_manager)
 board = Board(config.SCREEN_WIDTH, config.SCREEN_HEIGHT)
 
-sound_manager.play_background()  # Reproducir música de fondo
-
+sound_manager.play_background()
 score = 0
+
 running = True
 clock = pygame.time.Clock()
 ball_released = False  
@@ -36,9 +35,8 @@ while running:
 
         ui_event = ui.handle_event(event, sound_manager)
 
-        # Permitir ajustes de volumen aunque el menú esté abierto
         if ui.show_sound_settings:
-            continue  # Bloquear otros eventos pero permitir ajustes de volumen
+            continue
 
         if ui_event == "reset":
             board = Board(config.SCREEN_WIDTH, config.SCREEN_HEIGHT)  

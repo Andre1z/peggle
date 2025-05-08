@@ -3,6 +3,7 @@ import random
 
 class Particle:
     def __init__(self, x, y, color, lifespan=30):
+        """Inicializa una partícula con posición, color y duración."""
         self.x = x
         self.y = y
         self.color = color
