@@ -8,32 +8,28 @@ from peg import Peg
 from ball import Ball
 import physics
 from sound import EfectoSonidos
-from particles import Particle  # Importar sistema de partículas
+from level_generator import LevelGenerator  # Importar sistema de generación de niveles
 
 class Board:
     def __init__(self, width, height):
-        """Inicializa el tablero y los sonidos."""
+        """Inicializa el tablero y genera un nivel aleatorio."""
         self.width = width
         self.height = height
-        self.pegs = []
+        self.level_generator = LevelGenerator()  # Generador de niveles aleatorios
+        self.pegs = self.level_generator.pegs  # Cargar pegs generados
         self.ball = Ball(config.BALL_INITIAL_POSITION[0], config.BALL_INITIAL_POSITION[1])
         self.sound_manager = EfectoSonidos()
-        self.particles = []  # Lista de partículas
-        self.create_pegs()
-
-    def create_pegs(self):
-        """Crea pegs en posiciones predefinidas."""
-        for pos in config.PEG_POSITIONS:
-            self.pegs.append(Peg(pos[0], pos[1]))
 
     def update(self):
-        """Actualiza la lógica del tablero."""
+        """Actualiza el juego y verifica si todos los pegs naranjas han sido golpeados."""
         self.ball.update()
         
-        # Actualizar partículas
-        for p in self.particles:
-            p.update()
-        self.particles = [p for p in self.particles if p.lifespan > 0]  # Limpiar partículas expiradas
+        pegs_naranjas_restantes = [peg for peg in self.pegs if peg.color == (255, 165, 0) and not peg.hit_status]
+
+        if not pegs_naranjas_restantes:
+            print("¡Nivel completado! Generando nuevo nivel...")
+            self.level_generator.reset_level()
+            self.pegs = self.level_generator.pegs  # Asignar nuevo nivel
 
         for peg in self.pegs:
             if physics.check_collision(self.ball, peg):
@@ -41,16 +37,8 @@ class Board:
                 peg.hit()
                 self.sound_manager.play_hit()
 
-                # Generar partículas al impactar un peg
-                for _ in range(10):  # Generar múltiples partículas
-                    self.particles.append(Particle(peg.x, peg.y, (255, 255, 0)))  # Amarillo
-
     def draw(self, screen):
         """Dibuja los elementos del tablero en la pantalla."""
         for peg in self.pegs:
             peg.draw(screen)
         self.ball.draw(screen)
-
-        # Dibujar partículas
-        for p in self.particles:
-            p.draw(screen)

@@ -5,16 +5,19 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/.."))  # Agrega la
 import config
 
 class Peg:
-    def __init__(self, x, y):
+    def __init__(self, x, y, color=(0, 0, 255)):  # Azul por defecto
+        """Inicializa un peg con posición y color."""
         self.x = x
         self.y = y
-        self.radius = config.PEG_RADIUS
-        self.color = config.PEG_COLOR
-
-    def draw(self, screen):
-        """Dibuja el peg en la pantalla."""
-        pygame.draw.circle(screen, self.color, (self.x, self.y), self.radius)
+        self.radius = 10
+        self.color = color
+        self.hit_status = False
 
     def hit(self):
-        """Cambia el color del peg cuando es golpeado."""
-        self.color = (255, 255, 0)  # Amarillo para simular impacto
+        """Marca el peg como golpeado y cambia su color."""
+        self.hit_status = True
+        self.color = (100, 100, 100)  # Cambia a gris cuando es golpeado
+
+    def draw(self, screen):
+        """Dibuja el peg en pantalla."""
+        pygame.draw.circle(screen, self.color, (self.x, self.y), self.radius)
