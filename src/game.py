@@ -2,7 +2,7 @@ import pygame
 import sys
 import os
 
-# Ajustar la ruta para importar config.py desde la raíz
+# Ajustar la ruta para importar config.py desde la raíz del proyecto
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/.."))
 import config
 
@@ -20,6 +20,7 @@ pygame.display.set_caption("Peggle Nights Recreation")
 board = Board(config.SCREEN_WIDTH, config.SCREEN_HEIGHT)
 ui = UI(config.SCREEN_WIDTH, config.SCREEN_HEIGHT)
 sound_manager = SoundManager()
+sound_manager.play_background()  # Reproducir música de fondo
 score = 0  
 
 running = True
