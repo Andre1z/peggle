@@ -27,7 +27,7 @@ Los jugadores pueden lanzar una bola amarilla para impactar pegs en la pantalla 
 1️⃣ Clona o descarga el repositorio del proyecto.
 2️⃣ Asegúrate de tener Python y Pygame instalados.
 3️⃣ Navega al directorio raíz del juego.
-4️⃣ Ejecuta el siguiente comando: ```bash python src/game.py```
+4️⃣ Ejecuta el siguiente comando: ```python src/game.py```
 
 -------------------------------------------
 🛠 **Estructura del proyecto**
