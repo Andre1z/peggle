@@ -1,6 +1,4 @@
-===========================================
- Peggle Nights Recreation - README
-===========================================
+# Peggle Nights Recreation
 
 🎯 **Descripción**
 Este proyecto es una recreación del clásico juego "Peggle Nights" usando Python y Pygame.
