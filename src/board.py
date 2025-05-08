@@ -21,40 +21,28 @@ class Board:
         self.ball = Ball(config.BALL_INITIAL_POSITION[0], config.BALL_INITIAL_POSITION[1])
         self.sound_manager = EfectoSonidos()
         self.ball_released = False  
-        self.ball_fallen = False  
         self.aim_x = self.ball.x  
         self.aim_y = self.ball.y
-        self.score = self.load_score()  # Cargar puntuación acumulada sin sobrescribir
+        self.score = self.load_score()  
 
     def load_score(self):
-        """Carga la puntuación desde 'src/puntuation.json', asegurando que se mantenga acumulada."""
+        """Carga la puntuación desde 'src/puntuation.json' si existe."""
         try:
             with open("src/puntuation.json", "r") as file:
                 data = json.load(file)
-                return data.get("Puntuación", 0)  # Mantener la puntuación acumulada
+                return data.get("Puntuación", 0)  
         except (FileNotFoundError, json.JSONDecodeError):
             return 0  
 
     def save_score(self):
         """Guarda la puntuación acumulada correctamente en 'src/puntuation.json'."""
-        try:
-            with open("src/puntuation.json", "r") as file:
-                data = json.load(file)
-        except (FileNotFoundError, json.JSONDecodeError):
-            data = {"Puntuación": 0}  
-
-        data["Puntuación"] = self.score  
-
+        data = {"Puntuación": self.score}  
         with open("src/puntuation.json", "w") as file:
-            json.dump(data, file, indent=4)
-
-    def save_score_on_exit(self):
-        """Guarda la puntuación solo cuando el juego se cierra, evitando sobrescribir valores."""
-        self.save_score()  
+            json.dump(data, file, indent=4)  
 
     def release_ball(self, target_x, target_y):
         """Lanza la bola hacia la dirección seleccionada por el jugador."""
-        if not self.ball_released and not self.ball_fallen:
+        if not self.ball_released:
             self.ball_released = True
             self.ball.released = True
 
@@ -69,12 +57,11 @@ class Board:
             self.sound_manager.play_launch()
 
     def reset_ball(self):
-        """Reinicia la bola y permite al jugador relanzarla manualmente."""
+        """Reinicia la bola automáticamente cuando cae fuera de la pantalla."""
         self.ball.x = config.BALL_INITIAL_POSITION[0]
         self.ball.y = config.BALL_INITIAL_POSITION[1]
         self.ball.velocity = [0, 0]
-        self.ball_released = False
-        self.ball_fallen = False  
+        self.ball_released = False  
 
     def update(self):
         """Actualiza la lógica del juego, aplicando gravedad y verificando colisiones."""
@@ -84,24 +71,20 @@ class Board:
             physics.check_wall_collision(self.ball)  
 
             if self.ball.y > self.height:
-                self.ball_released = False
-                self.ball_fallen = True  
-                print("⚠ La bola ha caído. ¡Haz clic para relanzarla!")
+                self.reset_ball()  # Ahora la bola se reinicia automáticamente
 
-        # Verificar colisiones con pegs y sumar puntos correctamente
         for peg in self.pegs:
             if physics.check_collision(self.ball, peg):
                 physics.resolve_collision(self.ball, peg)
                 peg.hit()
                 self.sound_manager.play_hit()
 
-                # Sumar puntuación correctamente sin sobrescribir valores previos
-                if peg.color == (0, 0, 255):  # Azul
+                if peg.color == (0, 0, 255):  
                     self.score += 20
-                elif peg.color == (255, 165, 0):  # Naranja
+                elif peg.color == (255, 165, 0):  
                     self.score += 200
 
-        self.save_score()  # Guardar la puntuación actualizada en cada impacto
+        self.save_score()  
 
     def draw(self, screen):
         """Dibuja los elementos del tablero en la pantalla."""
@@ -109,16 +92,9 @@ class Board:
             peg.draw(screen)
         self.ball.draw(screen)
 
-        # Dibujar línea de trayectoria antes del lanzamiento
-        if not self.ball_released and not self.ball_fallen:
+        if not self.ball_released:
             pygame.draw.line(screen, (255, 255, 255), (self.ball.x, self.ball.y), (self.aim_x, self.aim_y), 2)
 
-        # Mostrar puntuación en pantalla (Solo una vez)
         font = pygame.font.Font(None, 36)
         score_text = font.render(f"Puntuación: {self.score}", True, (255, 255, 255))
         screen.blit(score_text, (20, 20))
-
-        # Mostrar mensaje de relanzamiento si la bola ha caído
-        if self.ball_fallen:
-            text = font.render("¡Haz clic para relanzar la bola!", True, (255, 255, 255))
-            screen.blit(text, (self.width // 2 - 150, self.height // 2))
