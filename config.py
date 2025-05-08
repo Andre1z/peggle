@@ -18,3 +18,7 @@ BALL_SPEED = 5
 # Parámetros de los pegs
 PEG_RADIUS = 20
 PEG_POSITIONS = [(200, 300), (400, 300), (600, 300)]  # Posiciones predefinidas
+
+# Rutas de archivos de sonido
+SOUND_LAUNCH = "assets/sounds/lanzar.wav"
+SOUND_HIT = "assets/sounds/golpear.wav"
