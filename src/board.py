@@ -63,6 +63,20 @@ class Board:
         self.ball.velocity = [0, 0]
         self.ball_released = False  
 
+    def check_pegs_remaining(self):
+        """Verifica si todos los pegs naranjas han sido impactados y recarga el nivel."""
+        orange_pegs = [peg for peg in self.pegs if peg.color == (255, 165, 0)]
+        if all(peg.hit_status for peg in orange_pegs):  # Si todos han sido impactados
+            self.load_new_level()
+
+    def load_new_level(self):
+        """Recarga un nuevo nivel cuando todos los pegs naranjas han sido impactados."""
+        print("🎯 ¡Nivel completado! Cargando el siguiente nivel...")
+
+        self.level_generator = LevelGenerator()  # Generar nuevo nivel
+        self.pegs = self.level_generator.pegs  # Actualizar los pegs
+        self.reset_ball()  # Reiniciar bola y permitir nuevo lanzamiento
+
     def update(self):
         """Actualiza la lógica del juego, aplicando gravedad y verificando colisiones."""
         if self.ball_released:
@@ -71,7 +85,7 @@ class Board:
             physics.check_wall_collision(self.ball)  
 
             if self.ball.y > self.height:
-                self.reset_ball()  # Ahora la bola se reinicia automáticamente
+                self.reset_ball()  
 
         for peg in self.pegs:
             if physics.check_collision(self.ball, peg):
@@ -84,6 +98,7 @@ class Board:
                 elif peg.color == (255, 165, 0):  
                     self.score += 200
 
+        self.check_pegs_remaining()  # Verificar si todos los pegs naranjas fueron impactados
         self.save_score()  
 
     def draw(self, screen):
