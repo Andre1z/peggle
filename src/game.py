@@ -39,15 +39,18 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN and not ball_released:
             board.ball.velocity = [(aim_x - config.SCREEN_WIDTH // 2) * 0.05, config.BALL_SPEED]
             ball_released = True
-            sound_manager.play_launch()  # Sonido al disparar la bola
-        elif ui.handle_event(event):  
-            board = Board(config.SCREEN_WIDTH, config.SCREEN_HEIGHT)  
-            ball_released = False
-            score = 0  
-
-    # Dibujar la trayectoria de la bola antes de disparar
-    if not ball_released:
-        pygame.draw.line(screen, (255, 255, 255), (config.SCREEN_WIDTH // 2, 100), (aim_x, aim_y), 2)
+            sound_manager.play_launch()
+    
+    # Manejo de eventos de UI
+    ui_event = ui.handle_event(event)
+    if ui_event == "reset":
+        board = Board(config.SCREEN_WIDTH, config.SCREEN_HEIGHT)  
+        ball_released = False
+        score = 0  
+    elif ui_event == "sound_settings":
+        pass  # La visibilidad del menú ya se gestiona en UI.py
+    elif ui.show_sound_settings:
+        ui.update_volume(event, sound_manager)  # Ajuste de volumen cuando la ventana está abierta
 
     board.update()
     board.draw(screen)
