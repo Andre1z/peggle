@@ -1,24 +1,32 @@
 import pygame
-from src.peg import Peg
+import peg
+import ball
+import physics
 
 class Board:
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.pegs = []  # Lista para almacenar los pegs
+        self.pegs = []
+        self.ball = Ball(width // 2, 100)  # Posición inicial de la bola
         self.create_pegs()
 
     def create_pegs(self):
         """Crea pegs en posiciones predefinidas."""
-        positions = [(200, 300), (400, 300), (600, 300)]  # Ejemplo de posiciones
+        positions = [(200, 300), (400, 300), (600, 300)]
         for pos in positions:
             self.pegs.append(Peg(pos[0], pos[1]))
 
     def update(self):
-        """Aquí podríamos actualizar la lógica del tablero en el futuro."""
-        pass
+        """Actualiza la lógica del tablero."""
+        self.ball.update()
+        
+        for peg in self.pegs:
+            if physics.check_collision(self.ball, peg):
+                physics.resolve_collision(self.ball, peg)
 
     def draw(self, screen):
-        """Dibuja los pegs en la pantalla."""
+        """Dibuja los elementos del tablero en la pantalla."""
         for peg in self.pegs:
             peg.draw(screen)
+        self.ball.draw(screen)
