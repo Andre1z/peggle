@@ -18,7 +18,7 @@ blurred_image = pygame.transform.smoothscale(background_image, (config.SCREEN_WI
 blurred_image = pygame.transform.scale(blurred_image, (config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
 
 screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
-pygame.display.set_caption("Peggle Recreation")
+pygame.display.set_caption("Peggle Nights Recreation")
 
 sound_manager = EfectoSonidos()
 ui = UI(config.SCREEN_WIDTH, config.SCREEN_HEIGHT, sound_manager)
@@ -31,8 +31,7 @@ running = True
 clock = pygame.time.Clock()
 
 while running:
-    # Dibujar fondo con efecto borroso
-    screen.blit(blurred_image, (0, 0))
+    screen.blit(blurred_image, (0, 0))  
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -40,7 +39,6 @@ while running:
             sys.exit()
 
         ui_event = ui.handle_event(event, sound_manager)
-
         if ui.show_sound_settings:
             continue
 
@@ -48,15 +46,19 @@ while running:
             board = Board(config.SCREEN_WIDTH, config.SCREEN_HEIGHT)  
             score = 0  
 
-        # Detectar movimiento del mouse para actualizar preview de trayectoria
+        # Actualizar preview de trayectoria cuando el jugador mueve el mouse
         elif event.type == pygame.MOUSEMOTION and not board.ball_released:
-            board.aim_x, board.aim_y = event.pos  # Actualizar la dirección prevista
+            board.aim_x, board.aim_y = event.pos  
 
-        # Detectar clic para lanzar la bola
-        elif event.type == pygame.MOUSEBUTTONDOWN and not board.ball_released:
-            board.release_ball(board.aim_x, board.aim_y)
+        # Detectar clic para lanzar la bola o relanzarla si ha caído
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if board.ball_fallen:  
+                board.reset_ball()
+            elif not board.ball_released:
+                board.release_ball(board.aim_x, board.aim_y)
 
     board.update()
+    score = board.score  # Obtener puntuación actualizada desde Board
     board.draw(screen)
     ui.draw(screen, score)  
 

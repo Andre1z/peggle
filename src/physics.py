@@ -5,7 +5,7 @@ import os
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/.."))
 import config  # Importar configuración global
 
-GRAVITY = 0.3  # Intensidad de la gravedad
+GRAVITY = 0.0002  # Intensidad de la gravedad
 
 def apply_gravity(ball):
     """Aplica gravedad a la bola en cada actualización."""
