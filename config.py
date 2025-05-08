@@ -9,7 +9,7 @@ SCREEN_HEIGHT = 600
 # Colores
 BACKGROUND_COLOR = (0, 0, 0)  # Negro
 PEG_COLOR = (255, 0, 0)  # Rojo
-BALL_COLOR = (0, 0, 255)  # Azul
+BALL_COLOR = (255, 255, 0)  # Amarillo (antes era azul)
 UI_COLOR = (200, 50, 50)  # Rojo oscuro para botones
 
 # Parámetros de la bola

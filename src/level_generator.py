@@ -14,13 +14,14 @@ class LevelGenerator:
         self.pegs = self.generate_level()
 
     def generate_level(self):
-        """Genera un nuevo nivel con pegs en posiciones aleatorias y formas variadas."""
+        """Genera un nuevo nivel con pegs en posiciones aleatorias y formas variadas, respetando la posición de la bola."""
         pegs = []
         orange_count = max(int(self.peg_count * self.orange_ratio), 1)  # Garantizar al menos 1 peg naranja
+        ball_y_limit = config.BALL_INITIAL_POSITION[1] + 50  # Máxima altura permitida para los pegs
 
         for _ in range(self.peg_count):
             x = random.randint(50, config.SCREEN_WIDTH - 50)
-            y = random.randint(100, config.SCREEN_HEIGHT - 100)
+            y = random.randint(ball_y_limit, config.SCREEN_HEIGHT - 100)  # Evita generar pegs por encima de la bola
 
             # Determinar forma del peg: círculo o rectángulo
             shape = random.choice(["circle", "rectangle"])
