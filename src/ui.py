@@ -52,8 +52,9 @@ class UI:
         sound_manager.set_effects_volume(self.effects_volume)
 
     def draw(self, screen, score):
-        """Dibuja la interfaz en la pantalla."""
-        score_text = self.font.render(f"Puntos: {score}", True, (255, 255, 255))
+        """Dibuja la interfaz en la pantalla, incluyendo la puntuación correctamente."""
+        # Corregido: Mostrar la puntuación una sola vez sin errores
+        score_text = self.font.render(f"Puntuación: {score}", True, (255, 255, 255))
         screen.blit(score_text, (20, 20))
 
         # Botón de reinicio

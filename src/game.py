@@ -22,10 +22,9 @@ pygame.display.set_caption("Peggle Nights Recreation")
 
 sound_manager = EfectoSonidos()
 ui = UI(config.SCREEN_WIDTH, config.SCREEN_HEIGHT, sound_manager)
-board = Board(config.SCREEN_WIDTH, config.SCREEN_HEIGHT)
+board = Board(config.SCREEN_WIDTH, config.SCREEN_HEIGHT)  # Cargar puntuación desde el inicio
 
 sound_manager.play_background()
-score = 0
 
 running = True
 clock = pygame.time.Clock()
@@ -44,13 +43,10 @@ while running:
 
         if ui_event == "reset":
             board = Board(config.SCREEN_WIDTH, config.SCREEN_HEIGHT)  
-            score = 0  
 
-        # Actualizar preview de trayectoria cuando el jugador mueve el mouse
         elif event.type == pygame.MOUSEMOTION and not board.ball_released:
             board.aim_x, board.aim_y = event.pos  
 
-        # Detectar clic para lanzar la bola o relanzarla si ha caído
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if board.ball_fallen:  
                 board.reset_ball()
@@ -58,9 +54,15 @@ while running:
                 board.release_ball(board.aim_x, board.aim_y)
 
     board.update()
-    score = board.score  # Obtener puntuación actualizada desde Board
     board.draw(screen)
-    ui.draw(screen, score)  
+    
+    # Mostrar puntuación en pantalla
+    font = pygame.font.Font(None, 36)
+    score_text = font.render(f"Puntuación: {board.score}", True, (255, 255, 255))
+    screen.blit(score_text, (20, 20))
+
+    # CORRECCIÓN: Pasar 'board.score' a la función UI.draw
+    ui.draw(screen, board.score)  
 
     pygame.display.flip()
     clock.tick(60)
