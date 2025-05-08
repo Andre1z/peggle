@@ -2,7 +2,6 @@ import pygame
 import sys
 import os
 
-# Ajustar la ruta para importar config.py desde la raíz
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/.."))
 import config
 
@@ -30,6 +29,7 @@ class SoundManager:
     def play_background(self):
         """Reproduce música de fondo en bucle."""
         pygame.mixer.music.load(config.SOUND_BACKGROUND)
+        pygame.mixer.music.set_volume(self.music_volume)  # Asegurar volumen antes de reproducir
         pygame.mixer.music.play(-1)  # -1 hace que la música se repita infinitamente
 
     def set_music_volume(self, volume):
