@@ -1,14 +1,14 @@
 import pygame
 from peg import Peg
 from ball import Ball
-import physics as physics
+import physics
 
 class Board:
     def __init__(self, width, height):
         self.width = width
         self.height = height
         self.pegs = []
-        self.ball = Ball(width // 2, 100)  # Posición inicial de la bola
+        self.ball = Ball(width // 2, 100, velocity=(0, 0))  # La bola empieza quieta
         self.create_pegs()
 
     def create_pegs(self):
