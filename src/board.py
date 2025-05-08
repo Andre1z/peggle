@@ -41,11 +41,12 @@ class Board:
             self.sound_manager.play_launch()
 
     def update(self):
-        """Actualiza la lógica del juego, aplicando gravedad si la bola ha sido lanzada."""
+        """Actualiza la lógica del juego, aplicando gravedad y verificando colisiones."""
         if self.ball_released:
             physics.apply_gravity(self.ball)  # Aplicar gravedad después del clic
             self.ball.update()
             physics.check_floor_collision(self.ball)  # Verificar si la bola cayó fuera
+            physics.check_wall_collision(self.ball)  # Verificar rebote en los bordes laterales
 
         # Verificar si todos los pegs naranjas han sido golpeados
         pegs_naranjas_restantes = [peg for peg in self.pegs if peg.color == (255, 165, 0) and not peg.hit_status]

@@ -5,7 +5,7 @@ import os
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/.."))
 import config  # Importar configuración global
 
-GRAVITY = 0.2  # Intensidad de la gravedad
+GRAVITY = 0.3  # Intensidad de la gravedad
 
 def apply_gravity(ball):
     """Aplica gravedad a la bola en cada actualización."""
@@ -28,6 +28,7 @@ def resolve_collision(ball, peg):
         peg.hit()  # Cambia color del peg
 
         if peg.shape == "circle":
+            # Rebote con vectores normales
             impact_x = ball.x - peg.x
             impact_y = ball.y - peg.y
             magnitude = math.sqrt(impact_x**2 + impact_y**2)
@@ -40,10 +41,15 @@ def resolve_collision(ball, peg):
                 ball.velocity[0] -= 2 * dot_product * normal_x
                 ball.velocity[1] -= 2 * dot_product * normal_y
 
-            ball.velocity[0] *= 1.05
-            ball.velocity[1] *= -0.8  # Rebote con pérdida de energía
+            ball.velocity[0] *= 1.1  # Ajuste dinámico en la dirección de rebote
+            ball.velocity[1] *= -0.85  # Rebote con pérdida de energía
         elif peg.shape == "rectangle":
-            ball.velocity[1] *= -0.8  # Rebote vertical con pérdida de energía
+            ball.velocity[1] *= -0.85  # Rebote vertical con pérdida de energía
+
+def check_wall_collision(ball):
+    """Verifica si la bola choca con los bordes izquierdo o derecho y cambia trayectoria."""
+    if ball.x - ball.radius < 0 or ball.x + ball.radius > config.SCREEN_WIDTH:
+        ball.velocity[0] *= -1  # Rebote en los bordes laterales
 
 def check_floor_collision(ball):
     """Verifica si la bola ha caído al suelo y reinicia su posición si es necesario."""
