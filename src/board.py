@@ -9,15 +9,16 @@ import config
 from peg import Peg
 from ball import Ball
 import physics
-from sound import SoundManager
+from sound import EfectoSonidos  # Usar la nueva clase para manejar los efectos de sonido
 
 class Board:
     def __init__(self, width, height):
+        """Inicializa el tablero y los sonidos."""
         self.width = width
         self.height = height
         self.pegs = []
         self.ball = Ball(config.BALL_INITIAL_POSITION[0], config.BALL_INITIAL_POSITION[1])
-        self.sound_manager = SoundManager()  # Instancia de sonidos
+        self.sound_manager = EfectoSonidos()  # Instancia de efectos de sonido
         self.create_pegs()
 
     def create_pegs(self):

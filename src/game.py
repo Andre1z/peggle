@@ -7,7 +7,7 @@ import config
 
 from board import Board
 from ui import UI
-from sound import SoundManager
+from sound import EfectoSonidos  # Importar la nueva clase de efectos de sonido
 
 pygame.init()
 
@@ -16,7 +16,7 @@ pygame.display.set_caption("Peggle Nights Recreation")
 
 board = Board(config.SCREEN_WIDTH, config.SCREEN_HEIGHT)
 ui = UI(config.SCREEN_WIDTH, config.SCREEN_HEIGHT)
-sound_manager = SoundManager()
+sound_manager = EfectoSonidos()  # Usar la nueva clase para efectos de sonido
 sound_manager.play_background()
 score = 0  
 

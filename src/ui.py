@@ -11,8 +11,7 @@ class UI:
         self.close_button = pygame.Rect(260, self.height - 280, 30, 30)  # Botón de cerrar la configuración
         self.show_sound_settings = False  # Indica si la ventana de configuración está abierta
         self.music_volume = 1.0
-        self.launch_volume = 1.0
-        self.hit_volume = 1.0
+        self.effects_volume = 1.0  # Ahora controla ambos sonidos de efectos
 
         # Cargar imagen de tuerca ⚙️
         self.gear_icon = pygame.image.load("assets/icons/gear.png")
@@ -38,7 +37,7 @@ class UI:
     def handle_event(self, event, sound_manager):
         """Detecta si el jugador ha hecho clic en un botón y permite cerrar el menú desde un botón interno."""
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.show_sound_settings:  # Priorizar ajustes de volumen y cierre antes de bloquear otros eventos
+            if self.show_sound_settings:
                 if self.close_button.collidepoint(event.pos):  # Si presiona cerrar, oculta la ventana
                     self.show_sound_settings = False
                     return "sound_settings"
@@ -63,34 +62,27 @@ class UI:
         screen.blit(close_text, (270, self.height - 275))
 
         music_label = self.font.render("Música", True, (255, 255, 255))
-        launch_label = self.font.render("Lanzamiento", True, (255, 255, 255))
-        hit_label = self.font.render("Impacto", True, (255, 255, 255))
+        effects_label = self.font.render("Efectos de Sonido", True, (255, 255, 255))  # Nueva etiqueta
 
         screen.blit(music_label, (40, self.height - 230))
-        screen.blit(launch_label, (40, self.height - 180))
-        screen.blit(hit_label, (40, self.height - 130))
+        screen.blit(effects_label, (40, self.height - 180))  # Solo una barra de efectos
 
         # Barras de volumen con indicadores
         pygame.draw.rect(screen, (100, 100, 100), (40, self.height - 210, 200, 10))  # Música
-        pygame.draw.rect(screen, (100, 100, 100), (40, self.height - 160, 200, 10))  # Lanzamiento
-        pygame.draw.rect(screen, (100, 100, 100), (40, self.height - 110, 200, 10))  # Impacto
+        pygame.draw.rect(screen, (100, 100, 100), (40, self.height - 160, 200, 10))  # Efectos
 
         # Indicadores del volumen actual
         pygame.draw.rect(screen, (255, 255, 255), (40, self.height - 210, int(self.music_volume * 200), 10))
-        pygame.draw.rect(screen, (255, 255, 255), (40, self.height - 160, int(self.launch_volume * 200), 10))
-        pygame.draw.rect(screen, (255, 255, 255), (40, self.height - 110, int(self.hit_volume * 200), 10))
+        pygame.draw.rect(screen, (255, 255, 255), (40, self.height - 160, int(self.effects_volume * 200), 10))  # Efectos
 
     def update_volume(self, event, sound_manager):
         """Permite ajustar el volumen de la música y los efectos de sonido de manera independiente."""
         if self.show_sound_settings and event.type == pygame.MOUSEBUTTONDOWN:
             x, y = event.pos
-            if 40 <= x <= 240:  # Rango de ajuste de volumen
+            if 40 <= x <= 240:
                 if self.height - 210 <= y <= self.height - 200:  # Control de música
                     self.music_volume = (x - 40) / 200
                     sound_manager.set_music_volume(self.music_volume)
-                elif self.height - 160 <= y <= self.height - 150:  # Control de lanzamiento
-                    self.launch_volume = (x - 40) / 200
-                    sound_manager.set_launch_volume(self.launch_volume)
-                elif self.height - 110 <= y <= self.height - 100:  # Control de impacto
-                    self.hit_volume = (x - 40) / 200
-                    sound_manager.set_hit_volume(self.hit_volume)
+                elif self.height - 160 <= y <= self.height - 150:  # Control de efectos
+                    self.effects_volume = (x - 40) / 200
+                    sound_manager.set_effects_volume(self.effects_volume)  # Nuevo método
